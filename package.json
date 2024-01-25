@@ -1,0 +1,16 @@
+{
+  "name": "fastify-started",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/yennmorrigan/fastify-started.git",
+  "author": "Dmitrii <dimaganin@manu.team>",
+  "license": "MIT",
+  "dependencies": {
+    "@fastify/jwt": "^8.0.0",
+    "@fastify/mysql": "^4.2.0",
+    "@fastify/swagger": "^8.14.0",
+    "@fastify/swagger-ui": "^2.1.0",
+    "fastify": "^4.25.2",
+    "fluent-json-schema": "^4.2.1"
+  }
+}

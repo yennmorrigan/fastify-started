@@ -1,0 +1,195 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "iRecipe internal API",
+    "version": "1.0.0"
+  },
+  "security": [{"bearerAuth": []}],
+  "servers": [
+    {
+      "url": "http://beyondwork.tech/api/irecipe/v1",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/auth/me": {
+      "get": {
+        "operationId": "getMe",
+        "summary": "Get data about the current user",
+        "tags": ["Authorization"],
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "iat": {
+                      "type": "integer"
+                    },
+                    "exp": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "operationId": "userRegistration",
+        "summary": "User registration",
+        "tags": ["Authorization"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "example@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "mypassword"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The user was successfully created"
+          },
+          "409": {
+            "description": "A user with this mail already exists",
+            "content": {
+              "application/json":{
+                "schema":{
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "operationId": "userLogin",
+        "summary": "User login",
+        "tags": ["Authorization"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "example@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "mypassword"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A successful login",
+            "content":{
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accessToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incorrect login or password",
+            "content": {
+              "application/json":{
+                "schema":{
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "HTTPError":{
+        "type": "object",
+        "properties": {
+          "message":{
+            "type": "string"
+          },
+          "statusCode":{
+            "type": "integer"
+          },
+          "error": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": ["message"]
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+      "description": "Unauthorized",
+      "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/HTTPError"
+            }
+          }
+        }
+      }
+    }
+  }
+
+}
