@@ -15,12 +15,10 @@ function build(opts = {}) {
     specification: {
       path: resolve('swagger.json'),
     },
-    routePrefix: '/docs',
-    exposeRoute: true
   })
 
   app.register(require('@fastify/swagger-ui'), {
-    routePrefix: '/docs'
+    routePrefix: '/api/irecipe/docs'
   })
   
 
