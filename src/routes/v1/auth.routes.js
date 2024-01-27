@@ -27,9 +27,13 @@ module.exports = function(fastify, opts, done) {
       }
 
       const [insertResult] = await fastify.mysql.query('insert into users set ?', insertData)
+      const [user] = await fastify.mysql.query("select * from users where id = ? limit 1", [insertResult.insertId]);
 
+      const accessToken =  fastify.jwt.sign({id: user[0].id, email: user[0].email}, {
+        expiresIn: '15m'
+      })
 
-      reply.code(201).send()
+      return reply.code(201).send({accessToken, refreshToken})
     } catch (e) {
       console.log(e)
     }
@@ -37,7 +41,7 @@ module.exports = function(fastify, opts, done) {
   })
 
   fastify.post('/signin', { schema: signinSchema }, async (request, reply) => {
-    const [rows] = await fastify.mysql.query("select id, email, password, salt from users where email = ? limit 1", [request.body.email]);
+    const [rows] = await fastify.mysql.query("select id, email, password, salt, refresh_token from users where email = ? limit 1", [request.body.email]);
     if (rows.length === 0) {
         reply.code(404).send({message: 'Incorrect login or password'})
         return reply;
@@ -52,7 +56,7 @@ module.exports = function(fastify, opts, done) {
     const accessToken =  fastify.jwt.sign({id: rows[0].id, email: rows[0].email}, {
       expiresIn: '15m'
     })
-    reply.code(200).send({accessToken});
+    reply.code(200).send({accessToken, refreshToken: rows[0].refresh_token});
     return reply;
 
   })

@@ -78,7 +78,22 @@
         },
         "responses": {
           "201": {
-            "description": "The user was successfully created"
+            "description": "The user was successfully created",
+            "content":{
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accessToken": {
+                      "type": "string"
+                    },
+                    "refreshToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }            
           },
           "409": {
             "description": "A user with this mail already exists",
@@ -129,6 +144,9 @@
                   "type": "object",
                   "properties": {
                     "accessToken": {
+                      "type": "string"
+                    },
+                    "refreshToken": {
                       "type": "string"
                     }
                   }
